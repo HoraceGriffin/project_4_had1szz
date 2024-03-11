@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.had1szz.cyzy.mapper.CategoryMapper">
+
+    <resultMap id="basicMap" type="cn.had1szz.cyzy.dto.CategoryDTO">
+        <id property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="parentId" column="parent_id"/>
+        <collection property="children" ofType="cn.had1szz.cyzy.dto.CategoryDTO"/>
+    </resultMap>
+
+    <resultMap id="categoryMap" type="cn.had1szz.cyzy.dto.CategoryDTO">
+        <id property="categoryId" column="category_id" />
+        <result property="categoryName" column="category_name" />
+        <result property="parentId" column="parent_id" />
+        <collection property="children" column="category_id" javaType="java.util.List" ofType="cn.had1szz.cyzy.dto.CategoryDTO" select="getChildCategories"/>
+    </resultMap>
+
+    <select id="listCategories" resultType="cn.had1szz.cyzy.dto.CategoryDTO" resultMap="categoryMap">
+        SELECT category_id, category_name, parent_id
+        FROM tb_categories
+        WHERE parent_id IS NULL
+    </select>
+
+    <select id="getChildCategories" resultMap="categoryMap">
+        SELECT category_id, category_name, parent_id
+        FROM tb_categories
+        WHERE parent_id = #{categoryId}
+    </select>
+</mapper>

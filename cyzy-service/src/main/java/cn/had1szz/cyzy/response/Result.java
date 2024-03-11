@@ -25,6 +25,10 @@ public class Result<T> {
         return result;
     }
 
+    public static Result<?> ok() {
+        return Result.ok("");
+    }
+
     public static <T> Result<T> fail(Integer code, String msg) {
         Result<T> result = new Result<>();
         result.setCode(code);

@@ -5,6 +5,7 @@ import cn.had1szz.cyzy.util.TokenGenerator;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,8 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtInterceptor implements HandlerInterceptor {
 
     private final TokenGenerator tokenGenerator;
+    private final ThreadLocal<Long> threadLocal;
 
-    public JwtInterceptor(TokenGenerator tokenGenerator) {this.tokenGenerator = tokenGenerator;}
+    public JwtInterceptor(TokenGenerator tokenGenerator, ThreadLocal<Long> threadLocal) {
+        this.tokenGenerator = tokenGenerator;
+        this.threadLocal = threadLocal;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -34,6 +39,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             throw new RuntimeException("Token格式错误");
         }
 
+        Long uid = tokenGenerator.getUid(authorization);
+        threadLocal.set(uid);
 
         return !tokenGenerator.isTokenExpired(authorization);
     }

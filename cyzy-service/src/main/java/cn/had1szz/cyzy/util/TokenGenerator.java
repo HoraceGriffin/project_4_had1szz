@@ -54,4 +54,9 @@ public class TokenGenerator {
         return JWT.decode(token.substring("Bearer ".length()));
     }
 
+    public Long getUid(String token) {
+        DecodedJWT decodedJWT = this.resolveBearer(token);
+        return decodedJWT.getClaim("uid").asLong();
+    }
+
 }
